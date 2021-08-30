@@ -1,22 +1,26 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native'
-import Config from 'react-native-config';
-import axios from 'axios';
-
 import ProductCard from '../../components/ProductCard/ProductCard'
 import useFetch from '../../hooks/useFetch/useFetch'
+import Loading from '../../components/Loading/Loading';
+import Error from '../../components/Error/Error';
+import {API} from '../../common'
 
-const Products = () => {
-    const {loading, data, error} = useFetch("https://fakestoreapi.com/products")
+const Products = ({navigation}) => {
+    const {loading, data, error} = useFetch(`${API}`)
 
-    const renderProduct = ({ item }) => <ProductCard product={item} />;
+    const handleProductSelect = (id) => {
+        navigation.navigate("DetailPage", {id})
+    };
+
+    const renderProduct = ({ item }) => <ProductCard product={item} onSelect={() => handleProductSelect(item.id)}/>;
 
     if (loading) {
-        return <ActivityIndicator size="large" color="#0000ff" />
+        return <Loading />
     }
 
     if (error) {
-        return <Text>{error}</Text>
+        return <Error />
     }
 
     return (
